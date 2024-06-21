@@ -25,4 +25,4 @@ jobs:
           echo "JAVA_HOME: $JAVA_HOME"
           java -version
           native-image --version
-          mvn -Pnative spring-boot:build-image
+          mvn -Pnative spring-boot:build-image -Dnative-image.args="--initialize-at-build-time=org.springframework.boot.loader.nio.file.NestedFileSystemProvider"
