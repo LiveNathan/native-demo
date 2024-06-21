@@ -19,6 +19,7 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      #Build Image
       - name: GraalVM build
         run: |
           echo "GRAALVM_HOME: $GRAALVM_HOME"
@@ -26,3 +27,7 @@ jobs:
           java -version
           native-image --version
           mvn -Pnative spring-boot:build-image
+
+      #Deploy the image to the Docker registry
+      - name: Push Images to Docker Registry
+        run: docker push -a nobasil/native-demo:tagname
