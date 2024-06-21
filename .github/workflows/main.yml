@@ -1,4 +1,4 @@
-name: Native-AMD64
+name: GraalVM Native Build
 
 on:
   push:
@@ -9,45 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      #Login to DockerHub
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-      - uses: actions/setup-java@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1.2.2
         with:
+          java-version: '22'
           distribution: 'graalvm'
-          java-version: '21'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Checkout master
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-      #Build Image
-      - name: Build Image
-        run: ./mvnw -Pnative spring-boot:build-image
-      #Deploy the image to the Docker registry
-      - name: Push Images to Docker Registry
-        run: docker push -a nobasil/native-demo
 
-
-  manifest:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: nobasil
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: pull-arm64
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 5
-          retry_wait_seconds: 60
-          max_attempts: 6
-          command: docker pull nobasil/native-demo:$GITHUB_REF_NAME-aarch_64
-      - name: create-manifest
+      - name: GraalVM build
         run: |
-          docker manifest create nobasil/native-demo:$GITHUB_REF_NAME --amend nobasil/native-demo:$GITHUB_REF_NAME-x86_64 --amend nobasil/native-demo:$GITHUB_REF_NAME-aarch_64
-          docker manifest push nobasil/native-demo:$GITHUB_REF_NAME
-          docker manifest create nobasil/native-demo:latest --amend nobasil/native-demo:$GITHUB_REF_NAME-x86_64 --amend nobasil/native-demo:$GITHUB_REF_NAME-aarch_64
-          docker manifest push nobasil/native-demo:latest
+          echo "GRAALVM_HOME: $GRAALVM_HOME"
+          echo "JAVA_HOME: $JAVA_HOME"
+          java -version
+          native-image --version
+          mvn -Pnative spring-boot:build-image
