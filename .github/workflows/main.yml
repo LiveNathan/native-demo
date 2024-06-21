@@ -11,15 +11,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1.2.2
         with:
           java-version: '21'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      #Build Image
       - name: GraalVM build
         run: |
           echo "GRAALVM_HOME: $GRAALVM_HOME"
@@ -27,10 +24,9 @@ jobs:
           java -version
           native-image --version
           mvn -Pnative spring-boot:build-image
-
-      # Tag the built image
-      - name: Tag Image
-        run: docker tag native-demo:0.0.1-SNAPSHOT nobasil/native-demo:${{ github.sha }}
-
-      - name: Push Images to Docker Registry
-        run: docker push nobasil/native-demo:${{ github.sha }}
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build and push Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}:latest .
+          docker push ghcr.io/${{ github.repository }}:latest
