@@ -30,7 +30,7 @@ jobs:
 
       # Tag the built image
       - name: Tag Image
-        run: docker tag native-demo:latest nobasil/native-demo:${{ github.sha }}
+        run: docker tag native-demo:0.0.1-SNAPSHOT nobasil/native-demo:${{ github.sha }}
 
       - name: Push Images to Docker Registry
         run: |
