@@ -12,13 +12,11 @@ jobs:
       #Login to DockerHub
       - name: Login to DockerHub
         uses: docker/login-action@v2
-        with:
-          username: LiveNathan
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - uses: actions/setup-java@v2
         with:
-          distribution: 'graalvm' # See 'Supported distributions' for available options
+          distribution: 'graalvm'
           java-version: '21'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout master
         uses: actions/checkout@v3
         with:
