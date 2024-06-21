@@ -34,8 +34,8 @@ jobs:
       - name: Get current date
         id: date
         run: echo "DATE=$(date +%s)" >> $GITHUB_ENV
-      - name: Build and push Docker image
+      - name: Tag and push Docker image
         run: |
           REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$REPO_NAME:latest .
+          docker tag native-demo:0.0.1-SNAPSHOT ghcr.io/$REPO_NAME:latest 
           docker push ghcr.io/$REPO_NAME:latest
