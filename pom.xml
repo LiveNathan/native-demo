@@ -51,25 +51,6 @@
 			<plugin>
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>build-native</id>
-						<goals>
-							<goal>compile-no-fork</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<fallback>false</fallback>
-					<agent>
-						<enabled>true</enabled>
-						<metadataCopy>
-							<merge>true</merge>
-							<outputDirectory>/META-INF/native-image</outputDirectory>
-						</metadataCopy>
-					</agent>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
